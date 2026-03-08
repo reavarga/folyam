@@ -5,6 +5,7 @@ import networkx as nx
 import seaborn as sns
 import random
 import os
+import hashlib
 
 def create_structured_numeric_puzzle_logic():
     G = nx.DiGraph()
@@ -39,12 +40,18 @@ Aztán mintha a bokor emlékezne:
 minden új hajtás annyi bimbót hoz,  
 amennyit az előző kettő együtt.  
 ''')
-    
+
+
     st.markdown("---") # Adds a nice horizontal divider
     user_guess = st.text_input("írd ide a megoldásod:")
     
     if st.button("Beküldés"):
-        if user_guess == "47.483845" or '47483845': 
+        h = hashlib.sha256()
+        h.update(user_guess.encode())
+        hash_val = h.hexdigest()
+        # Thought you could cheat mf?
+        if hash_val == '5161dfe35b7c1b3d8ce387032836d5463a089fc767146e78bc51964fbc40459a' \
+           or hash_val == 'd3b74d16a2fedca5370afecace8fe071e754b65a0406776cf3bb56e55451de56': 
             st.success("Helyes!")
         else:
             st.error("Próbáld újra")
@@ -118,6 +125,26 @@ amennyit az előző kettő együtt.
     
     if os.path.exists(path):
         os.remove(path)
+    # 1. Initialize the "memory" for the hint
+if "hint_used" not in st.session_state:
+    st.session_state.hint_used = False
+
+# 2. Define what happens when the button is clicked
+def reveal_hint():
+    st.session_state.hint_used = True
+
+# 3. Create the button
+# It uses the callback (on_click) to change the state, 
+# and the 'disabled' parameter to lock itself afterward.
+st.button(
+    "Need a hint?", 
+    on_click=reveal_hint, 
+    disabled=st.session_state.hint_used
+)
+
+# 4. Display the hint text if the state is True
+if st.session_state.hint_used:
+    st.info("Láss a dolgok mögé!")
 
 if __name__ == "__main__":
     show_interactive_graph()
