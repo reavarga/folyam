@@ -9,18 +9,15 @@ import hashlib
 
 def create_structured_numeric_puzzle_logic():
     G = nx.DiGraph()
-    # Part 1: Flow
     correct_path = [('S', 'G', 4), ('G', 'A', 7), ('A', 'F', 4), ('F', 'C', 8), ('C', 'T', 7)]
     extra_edges = [('S', 'B', 9), ('B', 'D', 1), ('G', 'E', 5), ('E', 'T', 2),
                     ('A', 'B', 3), ('F', 'H', 6), ('H', 'T', 2), ('S', 'D', 2), ('D', 'F', 5)]
     G.add_weighted_edges_from(correct_path + extra_edges)
 
-    # Part 2: Dijkstra
     dijkstra_main = ['T', 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,'Z']
     for i in range(len(dijkstra_main)-1):
         G.add_edge(dijkstra_main[i], dijkstra_main[i+1], weight=random.choice([3, 5, 6]))
 
-    # Traps
     G.add_weighted_edges_from([(10, 31, 1), (31, 13, 20), (15, 32, 2), (32, 18, 15), 
                                (20, 33, 3), (33, 34, 2), (34, 'Z', 25),(22,34, 60),
                                (22, 'Z',20), (24,34,10),(21,34,22), (34,20,15),
@@ -42,7 +39,7 @@ amennyit az előző kettő együtt.
 ''')
 
 
-    st.markdown("---") # Adds a nice horizontal divider
+    st.markdown("---")
     user_guess = st.text_input("írd ide a megoldásod:")
     
     if st.button("Beküldés"):
@@ -57,21 +54,16 @@ amennyit az előző kettő együtt.
             st.error("Próbáld újra")
 
     G = create_structured_numeric_puzzle_logic()
-    # Adjusted height here to match your requested window size logic
     net = Network(height="750px", width="100%", bgcolor="#ffffff", directed=True)
     
-    # Generate Seaborn Palette
     palette = sns.color_palette("viridis", 12).as_hex()
     highlight_color = sns.color_palette("flare", 10).as_hex()[1]
 
-    # Add Nodes manually to ensure labels are INSIDE
     for node in G.nodes():
-        # Specific check for S, T, and Z
         if node in ['S', 'T', 'Z']:
             node_color = highlight_color
-            node_size = 35 # Making them slightly larger too!
+            node_size = 35 
         else:
-            # Regular logic: Letters vs Numbers
             node_color = palette[3] if isinstance(node, str) else palette[8]
             node_size = 25
         
@@ -88,7 +80,6 @@ amennyit az előző kettő együtt.
             }
         )
 
-    # Add Edges manually to ensure weights show up properly
     for u, v, data in G.edges(data=True):
         weight = data.get('weight', 0)
         net.add_edge(
@@ -120,29 +111,22 @@ amennyit az előző kettő együtt.
     with open(path, 'r', encoding='utf-8') as f:
         html_string = f.read()
     
-    # Streamlit component height (kept close to 800 to avoid excess scrolling)
     components.html(html_string, height=800)
     
     if os.path.exists(path):
         os.remove(path)
-    # 1. Initialize the "memory" for the hint
 if "hint_used" not in st.session_state:
     st.session_state.hint_used = False
 
-# 2. Define what happens when the button is clicked
 def reveal_hint():
     st.session_state.hint_used = True
 
-# 3. Create the button
-# It uses the callback (on_click) to change the state, 
-# and the 'disabled' parameter to lock itself afterward.
 st.button(
     "Need a hint?", 
     on_click=reveal_hint, 
     disabled=st.session_state.hint_used
 )
 
-# 4. Display the hint text if the state is True
 if st.session_state.hint_used:
     st.info("Láss a dolgok mögé!")
 
