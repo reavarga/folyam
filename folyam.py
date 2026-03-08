@@ -29,16 +29,25 @@ def create_structured_numeric_puzzle_logic():
 
 def show_interactive_graph():
     st.set_page_config(layout="wide")
-    st.title("Interactive Puzzle: Labels Inside Nodes")
+    st.markdown('''
+Az égben a legtöbb felhőt átvivő útvonalat keressük.         
+A fűben a legrövidebbet a rovaroknak.  
+Egy régi ösvény szélén vadrózsák nőnek.  
+Ha megszámolod a bimbókat, először csak csupasz ágat látsz.  
+Mellette hamarosan megjelenik egy.  
+Aztán mintha a bokor emlékezne:  
+minden új hajtás annyi bimbót hoz,  
+amennyit az előző kettő együtt.  
+''')
     
     st.markdown("---") # Adds a nice horizontal divider
-    user_guess = st.text_input("Enter the shortest path:")
+    user_guess = st.text_input("írd ide a megoldásod:")
     
-    if st.button("Submit Answer"):
-        if user_guess == "S-A-T": # Just an example condition
-            st.success("Correct!")
+    if st.button("Beküldés"):
+        if user_guess == "47.483845" or '47483845': 
+            st.success("Helyes!")
         else:
-            st.error("Try again!")
+            st.error("Próbáld újra")
 
     G = create_structured_numeric_puzzle_logic()
     # Adjusted height here to match your requested window size logic
